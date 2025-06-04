@@ -1,2 +1,6 @@
 pandas>=2.0.0
-google-play-scraper>=1.2.0
+   google-play-scraper>=1.2.0
+   spacy>=3.0.0
+   transformers>=4.0.0
+   torch>=1.0.0
+   scikit-learn>=1.0.0

@@ -1,41 +1,62 @@
-# Bank Reviews Scraping Project
+# Bank Reviews Scraping and Analysis Project
 
-## Overview
-This project scrapes reviews from the Google Play Store for three banking apps, preprocesses the data, and saves it as a CSV file. The goal is to collect at least 400 reviews per bank (1,200 total) with minimal missing data.
+   ## Overview
+   This project scrapes reviews from the Google Play Store for three Ethiopian banks (Commercial Bank of Ethiopia, Bank of Abyssinia, Dashen Bank), preprocesses the data, performs sentiment and thematic analysis, and saves results for further analysis.
 
-## Methodology
-1. **Setup**: Initialize a GitHub repository with a `.gitignore` and `requirements.txt`. Work on the `task-1` branch with frequent, meaningful commits.
-2. **Scraping**: Use the `google-play-scraper` library to collect reviews, ratings, dates, and app names for three banking apps. Target 400+ reviews per bank.
-3. **Preprocessing**:
-   - Remove duplicate reviews based on content, date, and bank.
-   - Handle missing data by dropping rows with missing critical fields (review, rating, date).
-   - Normalize dates to YYYY-MM-DD format.
-4. **Output**: Save the preprocessed data as a CSV file with columns: `review`, `rating`, `date`, `bank`, `source`.
-5. **KPIs**:
-   - Collect 1,200+ reviews.
-   - Ensure <5% missing data.
-   - Maintain an organized Git repository.
+   ## Task 1: Data Collection and Preprocessing
+   ### Methodology
+   1. **Setup**: Initialized a GitHub repository with `.gitignore` and `requirements.txt`. Work on the `task-1` branch with frequent commits.
+   2. **Scraping**: Used `google-play-scraper` to collect reviews, ratings, dates, and app names for CBE (`et.com.cbemobilebanking`), BOA (`et.com.boamobile`), and Dashen Bank (`com.dashenbank.mBanking`). Targeted 400+ reviews per bank with `country='et'`.
+   3. **Preprocessing**:
+      - Removed duplicates based on review, date, and bank.
+      - Handled missing data by dropping incomplete rows.
+      - Normalized dates to YYYY-MM-DD.
+   4. **Output**: Saved as `data/bank_reviews.csv` with columns: `review`, `rating`, `date`, `bank`, `source`.
+   5. **KPIs**:
+      - Collected 1,200+ reviews.
+      - Ensured <5% missing data.
+      - Organized Git repository.
 
-## Setup Instructions
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   git checkout task-1
-   ```
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Update `BANK_APPS` in `scrape_reviews.py` with actual Google Play Store app IDs.
-4. Run the script:
-   ```bash
-   python scrape_reviews.py
-   ```
+   ## Task 2: Sentiment and Thematic Analysis
+   ### Methodology
+   1. **Sentiment Analysis**:
+      - Used `distilbert-base-uncased-finetuned-sst-2-english` to compute sentiment scores (positive, negative, neutral).
+      - Applied a 0.7 threshold for positive/negative classification; otherwise, labeled as neutral.
+      - Aggregated sentiment by bank and rating.
+   2. **Thematic Analysis**:
+      - Preprocessed reviews using `spaCy` for tokenization, lemmatization, and stop-word removal.
+      - Extracted keywords and n-grams using `TfidfVectorizer` (unigrams and bigrams).
+      - Clustered reviews into 3–5 themes per bank (e.g., Account Access Issues, Transaction Performance, User Interface & Experience, Customer Support, Feature Requests) using rule-based keyword matching.
+   3. **Output**: Saved results to `data/analyzed_reviews.csv` with columns: `review_id`, `review`, `sentiment_label`, `sentiment_score`, `themes`, `bank`, `rating`.
+   4. **KPIs**:
+      - Assigned sentiment scores to 90%+ reviews.
+      - Identified 3+ themes per bank with examples.
+      - Modular pipeline in `analyze_reviews.py`.
 
-## Output
-- The script generates a `bank_reviews.csv` file in the `data/` directory.
-- The CSV contains columns: `review`, `rating`, `date`, `bank`, `source`.
+   ## Setup Instructions
+   1. Clone the repository:
+      ```bash
+      git clone <repository-url>
+      git checkout task-2
+      ```
+   2. Install dependencies:
+      ```bash
+      pip install -r requirements.txt
+      python -m spacy download en_core_web_sm
+      ```
+   3. Run Task 1 to generate `bank_reviews.csv`:
+      ```bash
+      python scrape_reviews.py
+      ```
+   4. Run Task 2 for analysis:
+      ```bash
+      python analyze_reviews.py
+      ```
 
-## Notes
-- Replace `com.example.bank1`, etc., in `scrape_reviews.py` with actual app IDs from the Google Play Store.
-- The script handles errors gracefully and prints KPIs (total reviews and missing data percentage).
+   ## Output
+   - Task 1: `data/bank_reviews.csv`
+   - Task 2: `data/analyzed_reviews.csv`
+
+   ## Notes
+   - Ensure actual app IDs are correct in `scrape_reviews.py`.
+   - Monitor for scraping errors due to rate limits or limited reviews in the Ethiopian Google Play Store.
