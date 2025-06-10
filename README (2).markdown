@@ -1,7 +1,7 @@
 # Bank Reviews Scraping and Analysis Project
 
    ## Overview
-   This project scrapes reviews from the Google Play Store for three Ethiopian banks (Commercial Bank of Ethiopia, Bank of Abyssinia, Dashen Bank), preprocesses the data, performs sentiment and thematic analysis, and saves results for further analysis.
+   This project scrapes reviews from the Google Play Store for three Ethiopian banks (Commercial Bank of Ethiopia, Bank of Abyssinia, Dashen Bank), preprocesses the data, performs sentiment and thematic analysis, and stores it in an Oracle database.
 
    ## Task 1: Data Collection and Preprocessing
    ### Methodology
@@ -33,30 +33,49 @@
       - Identified 3+ themes per bank with examples.
       - Modular pipeline in `analyze_reviews.py`.
 
+   ## Task 3: Store Cleaned Data in Oracle
+   ### Methodology
+   1. **Database Setup**:
+      - Used Oracle Database XE with `oracledb` to create a `bank_reviews` database.
+      - Defined two tables:
+        - `Banks`: `bank_id` (primary key), `bank_name` (unique).
+        - `Reviews`: `review_id` (primary key), `bank_id` (foreign key), `review_text`, `rating`, `review_date`, `source`, `sentiment_label`, `sentiment_score`, `themes`.
+   2. **Data Insertion**:
+      - Inserted unique banks into `Banks` and reviews from `analyzed_reviews.csv` into `Reviews` using `setup_database.py`.
+   3. **SQL Dump**:
+      - Generated `bank_reviews_dump.sql` with `CREATE TABLE` and `INSERT` statements.
+   4. **KPIs**:
+      - Established a working connection and insert script.
+      - Populated tables with >1,000 entries.
+      - Committed SQL dump to GitHub.
+
    ## Setup Instructions
    1. Clone the repository:
       ```bash
       git clone <repository-url>
-      git checkout task-2
+      git checkout task-3
       ```
    2. Install dependencies:
       ```bash
       pip install -r requirements.txt
       python -m spacy download en_core_web_sm
       ```
-   3. Run Task 1 to generate `bank_reviews.csv`:
+   3. Setup Oracle XE:
+      - Install Oracle XE and create a user (`bank_user`).
+      - Update `DB_USER` and `DB_PASSWORD` in `setup_database.py`.
+   4. Run scripts in order:
       ```bash
       python scrape_reviews.py
-      ```
-   4. Run Task 2 for analysis:
-      ```bash
       python analyze_reviews.py
+      python setup_database.py
       ```
 
    ## Output
    - Task 1: `data/bank_reviews.csv`
    - Task 2: `data/analyzed_reviews.csv`
+   - Task 3: `data/bank_reviews_dump.sql`
 
    ## Notes
    - Ensure actual app IDs are correct in `scrape_reviews.py`.
    - Monitor for scraping errors due to rate limits or limited reviews in the Ethiopian Google Play Store.
+   - Update `DB_PASSWORD` in `setup_database.py` before running.

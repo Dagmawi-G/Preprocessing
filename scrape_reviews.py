@@ -3,11 +3,11 @@ from google_play_scraper import reviews, Sort
 from datetime import datetime
 import os
 
-# Define bank app IDs (replace with actual Google Play Store IDs)
+# Define bank app IDs for Ethiopian banks
 BANK_APPS = {
-    'Bank1': 'com.example.bank1',
-    'Bank2': 'com.example.bank2',
-    'Bank3': 'com.example.bank3'
+    'Commercial Bank of Ethiopia': 'et.com.cbemobilebanking',
+    'Bank of Abyssinia': 'et.com.boamobile',
+    'Dashen Bank': 'com.dashenbank.mBanking'
 }
 
 def scrape_reviews(app_id, bank_name, count=400):
@@ -20,7 +20,7 @@ def scrape_reviews(app_id, bank_name, count=400):
             result, continuation_token = reviews(
                 app_id,
                 lang='en',
-                country='us',
+                country='et',  # Set country to Ethiopia
                 sort=Sort.NEWEST,
                 count=min(100, count - len(all_reviews)),
                 continuation_token=continuation_token
@@ -51,7 +51,7 @@ def preprocess_reviews(reviews):
     df = df.dropna(subset=['review', 'rating', 'date'])
     
     # Ensure date is in YYYY-MM-DD format
-    df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%DD')
+    df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
     
     return df
 
